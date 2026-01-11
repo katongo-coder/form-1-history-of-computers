@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>History of Computers - Mr. Katongo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .scrolling-container { width: 100%; overflow: hidden; background: #4f46e5; color: white; padding: 12px 0; position: fixed; top: 0; left:0; z-index: 50; white-space: nowrap; }
+        .scrolling-text { display: inline-block; animation: scrollText 15s linear infinite; font-weight: 800; text-transform: uppercase; }
+        @keyframes rotateTitle { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .rotating-section { display: flex; justify-content: center; margin-top: 3rem; margin-bottom: 2rem; }
+        .rotating-text { display: inline-block; animation: rotateTitle 15s linear infinite; transform-origin: center; }
+        .selected { border-color: #4f46e5 !important; background-color: #f5f3ff !important; }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; padding: 0 !important; }
+            .print-card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; border-radius: 0 !important; }
+            .scrolling-container, .rotating-section { display: none !important; }
+        }
+    </style>
+</head>
+<body class="p-4 pt-24 min-h-screen flex flex-col items-center">
+    <div class="scrolling-container no-print"><div class="scrolling-text">Prepared By Mr. Katongo • History of Computers • Comprehensive Assessment • Mr. Katongo</div></div>
+    
+    <div class="max-w-3xl w-full">
+        <div id="reg-box" class="bg-white p-10 rounded-[40px] shadow-2xl border border-indigo-50 no-print">
+            <h2 class="text-2xl font-black text-indigo-900 mb-6 uppercase">Pupil's Registration</h2>
+            <p class="text-xs font-bold text-slate-400 mb-4 uppercase tracking-widest">Please enter your name to unlock the quiz</p>
+            <input type="text" id="sName" placeholder="Enter Full Name (Required)" class="w-full p-4 mb-4 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 transition">
+            <input type="text" id="sId" placeholder="Enter Pupil's ID (Optional)" class="w-full p-4 mb-6 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 transition">
+            <button onclick="start()" id="startB" disabled class="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black opacity-30 shadow-lg uppercase tracking-widest">Begin Quiz</button>
+        </div>
+
+        <div id="quiz-box" class="hidden bg-white p-10 rounded-[40px] shadow-2xl border border-indigo-50 no-print">
+            <div class="flex justify-between items-center mb-8 border-b pb-4">
+                <div class="bg-indigo-50 px-4 py-2 rounded-full border border-indigo-100"><span id="timer" class="font-black text-indigo-700">00:00</span></div>
+                <span id="prog" class="text-xs font-black text-slate-400 uppercase tracking-widest"></span>
+            </div>
+            <h2 id="qText" class="text-2xl font-bold text-slate-800 mb-10 leading-tight"></h2>
+            <div id="opts" class="space-y-4"></div>
+            <div class="flex justify-end mt-10">
+                <button id="nextB" disabled class="bg-indigo-600 text-white px-12 py-4 rounded-2xl font-black shadow-lg disabled:opacity-20 uppercase tracking-widest">Next Question</button>
+            </div>
+        </div>
+
+        <div id="res-box" class="hidden space-y-8">
+            <div class="bg-white p-10 rounded-[40px] shadow-2xl border-b-[12px] border-indigo-600 print-card">
+                <h2 class="text-3xl font-black text-slate-800 text-center uppercase mb-1 tracking-tight">Official ICT Report</h2>
+                <p class="text-center font-black text-indigo-600 uppercase tracking-[0.2em] text-[10px] mb-8">TOPIC: HISTORY OF COMPUTERS</p>
+                <p class="text-center font-black text-indigo-600 uppercase tracking-[0.2em] text-[10px] mb-8">Approved by Mr. Katongo</p>
+                
+                <div class="grid grid-cols-2 gap-4 mb-8 bg-slate-50 p-6 rounded-3xl border border-indigo-50">
+                    <div><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pupil's Name:</p><p id="rn" class="font-black text-slate-800 text-lg"></p></div>
+                    <div><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pupil's ID Number:</p><p id="ri" class="font-black text-slate-800 text-lg"></p></div>
+                    <div class="mt-2"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Number of Attempt(s)</p><p id="ra" class="font-black text-indigo-600"></p></div>
+                    <div class="mt-2"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Time Elapsed:</p><p id="rt" class="font-black text-slate-800"></p></div>
+                </div>
+                <div class="text-center py-4">
+                    <p class="text-7xl font-black text-indigo-600 mb-2"><span id="pct"></span>%</p>
+                    <p class="text-xl font-bold text-slate-700 uppercase">Total Marks: <span id="raw"></span></p>
+                    <p id="grade" class="mt-6 inline-block px-8 py-2 rounded-full font-black text-sm uppercase tracking-widest"></p>
+                </div>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 mt-10 no-print">
+                    <button onclick="window.print()" class="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl">Print Report / PDF</button>
+                    <button onclick="restart()" class="bg-slate-800 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl">Retake Quiz</button>
+                </div>
+            </div>
+            <div class="bg-white p-10 rounded-[40px] shadow-xl border border-indigo-50 print-card">
+                <h3 class="text-xl font-black text-slate-800 mb-8 border-b pb-4">Performance Review</h3>
+                <div id="revList" class="space-y-6"></div>
+                <div class="mt-12 pt-8 border-t text-center">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">ICT • Prepared by Mr. Katongo </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const data = [
+            {
+                question: "Who is known as the 'Father of the Computer'?",
+                correctText: "Charles Babbage",
+                rationale: "Charles Babbage designed the Analytical Engine in the 1830s, which is considered the first concept of a general-purpose computer.",
+                answerOptions: [{text: "Charles Babbage", isCorrect: true}, {text: "Bill Gates", isCorrect: false}, {text: "Steve Jobs", isCorrect: false}, {text: "Alan Turing", isCorrect: false}]
+            },
+            {
+                question: "What was the name of the first electronic general-purpose computer?",
+                correctText: "ENIAC",
+                rationale: "ENIAC (1945) was the first programmable, electronic, digital computer and it could solve a large range of numerical problems.",
+                answerOptions: [{text: "ENIAC", isCorrect: true}, {text: "IBM PC", isCorrect: false}, {text: "Altair 8800", isCorrect: false}, {text: "Apple I", isCorrect: false}]
+            },
+            {
+                question: "Which component replaced vacuum tubes in second-generation computers?",
+                correctText: "Transistors",
+                rationale: "Transistors were smaller, faster, and more reliable than vacuum tubes, marking a major leap in computer evolution.",
+                answerOptions: [{text: "Microchips", isCorrect: false}, {text: "Transistors", isCorrect: true}, {text: "Silicon Waves", isCorrect: false}, {text: "Copper Wires", isCorrect: false}]
+            },
+            {
+                question: "Who is considered the world's first computer programmer?",
+                correctText: "Ada Lovelace",
+                rationale: "Ada Lovelace wrote the first algorithm intended to be carried out by a machine (Babbage's Analytical Engine).",
+                answerOptions: [{text: "Grace Hopper", isCorrect: false}, {text: "Ada Lovelace", isCorrect: true}, {text: "Mary Jackson", isCorrect: false}, {text: "Margaret Hamilton", isCorrect: false}]
+            },
+            {
+                question: "Which generation of computers introduced the Microprocessor?",
+                correctText: "Fourth Generation",
+                rationale: "The 4th generation (1971-present) saw thousands of integrated circuits built onto a single silicon chip (the microprocessor).",
+                answerOptions: [{text: "First Generation", isCorrect: false}, {text: "Second Generation", isCorrect: false}, {text: "Third Generation", isCorrect: false}, {text: "Fourth Generation", isCorrect: true}]
+            },
+            {
+                question: "What did the 'Abacus' primarily help ancient people do?",
+                correctText: "Perform mathematical calculations",
+                rationale: "The Abacus is one of the oldest calculating tools, used for addition, subtraction, multiplication, and division.",
+                answerOptions: [{text: "Write letters", isCorrect: false}, {text: "Perform mathematical calculations", isCorrect: true}, {text: "Store photos", isCorrect: false}, {text: "Browse the internet", isCorrect: false}]
+            },
+            {
+                question: "Which company developed the first widely used Graphical User Interface (GUI)?",
+                correctText: "Xerox",
+                rationale: "Xerox PARC developed the first GUI, which used icons and windows, later inspiring Apple and Microsoft.",
+                answerOptions: [{text: "Apple", isCorrect: false}, {text: "Xerox", isCorrect: true}, {text: "IBM", isCorrect: false}, {text: "Google", isCorrect: false}]
+            },
+            {
+                question: "What was the main purpose of the 'Herman Hollerith' Tabulating Machine?",
+                correctText: "To process census data",
+                rationale: "It was designed to help process data for the 1890 U.S. Census using punched cards.",
+                answerOptions: [{text: "To play music", isCorrect: false}, {text: "To process census data", isCorrect: true}, {text: "To predict the weather", isCorrect: false}, {text: "To build cars", isCorrect: false}]
+            },
+            {
+                question: "What does 'PC' stand for in computer history?",
+                correctText: "Personal Computer",
+                rationale: "The term became popular in the 1970s and 80s as computers became small and affordable enough for individuals.",
+                answerOptions: [{text: "Private Connection", isCorrect: false}, {text: "Processor Center", isCorrect: false}, {text: "Personal Computer", isCorrect: true}, {text: "Power Control", isCorrect: false}]
+            },
+            {
+                question: "Which female scientist coined the term 'Computer Bug'?",
+                correctText: "Grace Hopper",
+                rationale: "Grace Hopper found a literal moth stuck in a relay of the Harvard Mark II computer, calling it a 'bug'.",
+                answerOptions: [{text: "Grace Hopper", isCorrect: true}, {text: "Katherine Johnson", isCorrect: false}, {text: "Marie Curie", isCorrect: false}, {text: "Rosalind Franklin", isCorrect: false}]
+            }
+        ];
+
+        let cur = 0, score = 0, history = [], t = 0, tInt, attempts = 0;
+        const iN = document.getElementById('sName'), iI = document.getElementById('sId'), sB = document.getElementById('startB');
+        
+        const validate = () => { 
+            sB.disabled = !(iN.value.trim().length > 0); 
+            sB.style.opacity = sB.disabled ? '0.3' : '1'; 
+        };
+        iN.oninput = validate; 
+
+        function start() {
+            attempts++;
+            document.getElementById('reg-box').classList.add('hidden');
+            document.getElementById('quiz-box').classList.remove('hidden');
+            startTimer();
+            show();
+        }
+
+        function startTimer() {
+            t = 0;
+            clearInterval(tInt);
+            tInt = setInterval(() => { t++; let m=Math.floor(t/60).toString().padStart(2,'0'), s=(t%60).toString().padStart(2,'0'); document.getElementById('timer').innerText = `${m}:${s}`; }, 1000);
+        }
+
+        function show() {
+            const q = data[cur];
+            document.getElementById('nextB').disabled = true;
+            document.getElementById('prog').innerText = `Question ${cur+1} of ${data.length}`;
+            document.getElementById('qText').innerText = q.question;
+            const oD = document.getElementById('opts'); oD.innerHTML = '';
+            
+            // Randomize options
+            const shuffled = [...q.answerOptions].sort(() => Math.random() - 0.5);
+            
+            shuffled.forEach(o => {
+                const b = document.createElement('button');
+                b.className = "w-full text-left p-5 border-2 border-slate-100 rounded-3xl font-bold text-slate-700 transition hover:border-indigo-300";
+                b.innerText = o.text;
+                b.onclick = () => { 
+                    Array.from(oD.children).forEach(c => c.classList.remove('selected')); 
+                    b.classList.add('selected'); 
+                    b.dataset.c = o.isCorrect; 
+                    b.dataset.t = o.text; 
+                    document.getElementById('nextB').disabled = false; 
+                };
+                oD.appendChild(b);
+            });
+        }
+
+        document.getElementById('nextB').onclick = () => {
+            const sel = document.querySelector('.selected');
+            const isC = sel.dataset.c === "true";
+            if(isC) score++;
+            history.push({ q: data[cur].question, u: sel.dataset.t, c: data[cur].correctText, r: data[cur].rationale, isC });
+            cur++;
+            if(cur < data.length) show(); else finish();
+        };
+
+        function finish() {
+            clearInterval(tInt);
+            document.getElementById('quiz-box').classList.add('hidden');
+            document.getElementById('res-box').classList.remove('hidden');
+            const p = Math.round((score/data.length)*100);
+            document.getElementById('pct').innerText = p;
+            document.getElementById('raw').innerText = `${score} / ${data.length}`;
+            document.getElementById('rn').innerText = iN.value;
+            document.getElementById('ri').innerText = iI.value || "Not Provided";
+            document.getElementById('ra').innerText = attempts;
+            document.getElementById('rt').innerText = document.getElementById('timer').innerText;
+            const g = document.getElementById('grade');
+            g.innerText = p >= 50 ? "RESULT: PASSED" : "RESULT: FAILED  Retake Quiz";
+            g.className = `mt-6 inline-block px-8 py-2 rounded-full font-black text-sm uppercase tracking-widest ${p>=50?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}`;
+            
+            const list = document.getElementById('revList'); list.innerHTML = '';
+            history.forEach((h, i) => {
+                const d = document.createElement('div');
+                d.className = `p-6 rounded-[30px] border-l-[10px] mb-4 ${h.isC ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}`;
+                d.innerHTML = `
+                    <p class="font-black text-slate-800">${i+1}. ${h.q}</p>
+                    <p class="text-xs mt-3"><b>Choice:</b> ${h.u} ${h.isC?'✅':'❌'}</p>
+                    ${!h.isC ? `<p class="text-xs text-green-700"><b>Correct:</b> ${h.c}</p>` : ''}
+                    <div class="mt-4 p-4 bg-white/60 rounded-2xl text-[10px] text-slate-600 border border-slate-100 italic">
+                        <b class="text-indigo-600 uppercase tracking-widest block mb-1">Mr. Katongo's Rationale:</b>${h.r}
+                    </div>`;
+                list.appendChild(d);
+            });
+        }
+
+        function restart() {
+            cur = 0; score = 0; history = []; t = 0;
+            document.getElementById('timer').innerText = "00:00";
+            document.getElementById('res-box').classList.add('hidden');
+            document.getElementById('quiz-box').classList.remove('hidden');
+            startTimer();
+            show();
+        }
+    </script>
+</body>
+</html>
